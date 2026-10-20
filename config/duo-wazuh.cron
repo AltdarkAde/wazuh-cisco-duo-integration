@@ -1,0 +1,2 @@
+# Install as /etc/cron.d/duo-wazuh (root-owned, mode 644)
+*/5 * * * * root /opt/duo-venv/bin/python /var/ossec/integrations/duo_pull.py >> /var/log/duo/collector_errors.log 2>&1

@@ -1,0 +1,9 @@
+# Install as /etc/logrotate.d/duo
+/var/log/duo/*.log {
+    daily
+    rotate 14
+    compress
+    missingok
+    notifempty
+    copytruncate
+}

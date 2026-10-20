@@ -1,0 +1,5 @@
+duo.env
+.duo_last
+*.log
+*.bak
+*.bak2

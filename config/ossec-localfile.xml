@@ -1,0 +1,5 @@
+<!-- Add inside <ossec_config> in /var/ossec/etc/ossec.conf -->
+<localfile>
+  <log_format>json</log_format>
+  <location>/var/log/duo/duo.log</location>
+</localfile>

@@ -1,0 +1,39 @@
+<!--
+  Wazuh rules for Cisco Duo (Admin API logs collected by scripts/duo_pull.py).
+  Install as /var/ossec/etc/rules/duo_rules.xml.
+  Do not also paste these into local_rules.xml: duplicate IDs stop the manager loading them.
+  Rule IDs 100500-100503 must be unique on your manager.
+-->
+<group name="duo,">
+
+  <!-- Every Duo authentication event.
+       Child of 86600 because the stock Suricata rule swallows any JSON
+       event that has both event_type and timestamp, which Duo events do. -->
+  <rule id="100500" level="3">
+    <if_sid>86600</if_sid>
+    <field name="duo_log_type">authentication</field>
+    <description>Duo: authentication $(result) for $(user.name)</description>
+  </rule>
+
+  <!-- Failed / denied / fraud / error results (Duo values are lowercase) -->
+  <rule id="100501" level="7">
+    <if_sid>100500</if_sid>
+    <field name="result" type="pcre2">(?i)^(denied|failure|fraud|error)$</field>
+    <description>Duo: authentication $(result) for $(user.name)</description>
+  </rule>
+
+  <!-- 5 failures for the same user within 5 minutes -->
+  <rule id="100502" level="10" frequency="5" timeframe="300">
+    <if_matched_sid>100501</if_matched_sid>
+    <same_field>user.name</same_field>
+    <description>Duo: multiple failed authentications for $(user.name)</description>
+  </rule>
+
+  <!-- Duo administrator actions -->
+  <rule id="100503" level="8">
+    <decoded_as>json</decoded_as>
+    <field name="duo_log_type">administrator</field>
+    <description>Duo: administrator action $(action)</description>
+  </rule>
+
+</group>
